@@ -5,6 +5,13 @@ export class EruT1 {
         this.quarter = null;
         this.data_df = null;
         this.statements = [];
+        // Add quarters mapping
+        this.quarters = {
+            Q1: [1, 2, 3],
+            Q2: [4, 5, 6],
+            Q3: [7, 8, 9],
+            Q4: [10, 11, 12]
+        };
         this.region = [
             {
                 name: "Hlavní město Praha",
@@ -83,6 +90,14 @@ export class EruT1 {
         ];
     }
 
+    // Add method to set quarter
+    setQuarter(quarter) {
+        if (!['Q1', 'Q2', 'Q3', 'Q4'].includes(quarter)) {
+            throw new Error('Invalid quarter. Must be Q1, Q2, Q3, or Q4');
+        }
+        this.quarter = quarter;
+    }
+
     readFile(arrayBuffer, sheetName) {
         const workbook = read(arrayBuffer, { type: 'array' });
         const worksheet = workbook.Sheets[sheetName];
@@ -90,19 +105,33 @@ export class EruT1 {
         // Convert to array of objects, skip first row
         let data = utils.sheet_to_json(worksheet, { range: 1 });
         
+        // Add debugging to see raw data
+        console.log('Raw data sample:', data.slice(0, 2));
+        
         // Convert all numeric values to float and round to 2 decimal places
         data = data.map(row => {
             const newRow = {};
             for (const [key, value] of Object.entries(row)) {
+                // Skip empty or undefined values
+                if (value === undefined || value === '') {
+                    continue;
+                }
+                
+                // Handle numeric values
                 if (typeof value === 'number') {
                     newRow[key] = Number(value.toFixed(2));
+                } else if (typeof value === 'string' && !isNaN(value)) {
+                    // Convert string numbers to actual numbers
+                    newRow[key] = Number(Number(value).toFixed(2));
                 } else {
-                    newRow[key] = value || 0;
+                    newRow[key] = value;
                 }
             }
             return newRow;
         });
 
+        console.log('Processed data sample:', data.slice(0, 2));
+        this.data_df = data;
         return data;
     }
 
@@ -110,44 +139,62 @@ export class EruT1 {
         return new Date().toISOString();
     }
 
-    // Helper function to get months by quarter
-    monthsByQuarter(quarter) {
-        const quarterMonths = {
-            1: [1, 2, 3],
-            2: [4, 5, 6],
-            3: [7, 8, 9],
-            4: [10, 11, 12]
-        };
-        return quarterMonths[quarter] || [];
-    }
 
     // Filter data based on month, region, and typPaliva
     filterData(data, month, region, typPaliva = null) {
-        if (typPaliva === null) {
-            return data.filter(row => 
-                row.month === month && 
-                row.region === region
-            );
+        if (!data || !Array.isArray(data)) {
+            console.warn('No data available for filtering');
+            return [];
         }
-        return data.filter(row => 
-            row.month === month && 
-            row.region === region && 
-            row.typPaliva === typPaliva
-        );
+
+        console.log(`Filtering for month: ${month}, region: ${region}, fuel: ${typPaliva}`);
+        
+        const filtered = data.filter(row => {
+            const monthMatch = Number(row.month) === Number(month);
+            const regionMatch = row.region === region;
+            const fuelMatch = typPaliva ? row.typPaliva === typPaliva : true;
+            
+            return monthMatch && regionMatch && fuelMatch;
+        });
+
+        console.log(`Found ${filtered.length} matching rows`);
+        if (filtered.length > 0) {
+            console.log('Sample filtered row:', filtered[0]);
+        }
+
+        return filtered;
     }
 
     makeGenSellHeatPart(region, month, palivo) {
         const filteredData = this.filterData(this.data_df, month, region.name, palivo);
         
-        return {
+        const result = {
             typPaliva: palivo,
-            ztraty: filteredData.reduce((sum, row) => sum + (row.h_ztraty || 0), 0),
-            bruttoVyroba: filteredData.reduce((sum, row) => sum + (row.h_bruttoVyroba || 0), 0),
-            bilancniRozdil: filteredData.reduce((sum, row) => sum + (row.h_bilancniRozdil || 0), 0),
-            primeDodavkyCizimSubjektum: filteredData.reduce((sum, row) => sum + (row.h_primeDodavkyCizimSubjektum || 0), 0),
-            technologickaVlastniSpotreba: filteredData.reduce((sum, row) => sum + (row.h_technologickaVlastniSpotreba || 0), 0),
-            dodavkyDoVlastnihoPodnikuNeboZarizeni: filteredData.reduce((sum, row) => sum + (row.h_dodavkyDoVlastnihoPodnikuNeboZarizeni || 0), 0)
+            ztraty: 0,
+            bruttoVyroba: 0,
+            bilancniRozdil: 0,
+            primeDodavkyCizimSubjektum: 0,
+            technologickaVlastniSpotreba: 0,
+            dodavkyDoVlastnihoPodnikuNeboZarizeni: 0
         };
+
+        filteredData.forEach(row => {
+            result.ztraty += Number(row.h_ztraty || 0);
+            result.bruttoVyroba += Number(row.h_bruttoVyroba || 0);
+            result.bilancniRozdil += Number(row.h_bilancniRozdil || 0);
+            result.primeDodavkyCizimSubjektum += Number(row.h_primeDodavkyCizimSubjektum || 0);
+            result.technologickaVlastniSpotreba += Number(row.h_technologickaVlastniSpotreba || 0);
+            result.dodavkyDoVlastnihoPodnikuNeboZarizeni += Number(row.h_dodavkyDoVlastnihoPodnikuNeboZarizeni || 0);
+        });
+
+        // Round all values to 2 decimal places
+        for (let key in result) {
+            if (typeof result[key] === 'number') {
+                result[key] = Number(result[key].toFixed(2));
+            }
+        }
+
+        return result;
     }
 
     makePalivaPart(region, month, palivo) {
@@ -207,7 +254,15 @@ export class EruT1 {
 
     makeStatement() {
         const datestr = this.getDate();
-        const monthList = this.monthsByQuarter(this.quarter);
+        
+        if (!this.quarter) {
+            console.warn('Quarter not set');
+            return null;
+        }
+
+        // Use months from the selected quarter
+        const monthList = this.quarters[this.quarter];
+        console.log('Using months for quarter:', monthList);
 
         return {
             identifikacniUdajeVykazu: {

@@ -1,11 +1,12 @@
 'use client'
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { EruT1 } from '@/utils/eru_t1.js'; // We'll modify eru_e1.js to be a module
 
 const EruConverter = () => {
     const [file, setFile] = useState(null);
     const [jsonResult, setJsonResult] = useState(null);
     const [error, setError] = useState(null);
+    const [selectedQuarter, setSelectedQuarter] = useState('Q1');
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const uploadedFile = event.target.files?.[0];
@@ -17,6 +18,7 @@ const EruConverter = () => {
     const handleConvert = async () => {
         try {
             const handler = new EruT1();
+            handler.setQuarter(selectedQuarter);
             
             // Convert File object to ArrayBuffer
             const arrayBuffer = await file.arrayBuffer();
@@ -25,7 +27,7 @@ const EruConverter = () => {
             const data = handler.readFile(arrayBuffer, 'ExportERU');
             
             // Generate statements
-            handler.makeStatements(data, new Date());
+            handler.makeStatement();
             const result = handler.generateStatements();
             
             setJsonResult(result);
@@ -76,7 +78,7 @@ const EruConverter = () => {
             <div className="file-input">
                 <input 
                     type="file" 
-                    accept=".xlsx,.xlsm"
+                    accept=".xlsx,.xlsm,.numbers"
                     onChange={handleFileChange}
                 />
                 <button 
@@ -85,6 +87,22 @@ const EruConverter = () => {
                 >
                     Convert to JSON
                 </button>
+            </div>
+            
+            <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">
+                    Select Quarter
+                </label>
+                <select
+                    value={selectedQuarter}
+                    onChange={(e) => setSelectedQuarter(e.target.value)}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                >
+                    <option value="Q1">Q1 (Jan-Mar)</option>
+                    <option value="Q2">Q2 (Apr-Jun)</option>
+                    <option value="Q3">Q3 (Jul-Sep)</option>
+                    <option value="Q4">Q4 (Oct-Dec)</option>
+                </select>
             </div>
             
             {error && (
@@ -106,4 +124,4 @@ const EruConverter = () => {
     );
 };
 
-export default EruConverter; useState, EruE1, import React from 'react';
+export default EruConverter; 

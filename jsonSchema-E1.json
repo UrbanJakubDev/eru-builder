@@ -3,24 +3,17 @@
   "properties": {
     "typVykazu": {
       "type": "string",
-      "enum": [
-        "E1"
-      ]
+      "enum": ["E1"]
     },
     "vykazy": {
       "type": "array",
       "items": {
         "type": "object",
-        "required": [
-          "e1vykaz"
-        ],
+        "required": ["e1vykaz"],
         "properties": {
           "e1vykaz": {
             "type": "object",
-            "required": [
-              "e1TechnologieKvet",
-              "pocetPaliv"
-            ],
+            "required": ["e1TechnologieKvet", "pocetPaliv"],
             "properties": {
               "e1Paliva": {
                 "type": "object",
@@ -86,12 +79,7 @@
                         },
                         "jednotkaPaliva": {
                           "type": "string",
-                          "enum": [
-                            "t",
-                            "GJ",
-                            "MWh",
-                            "tis. m3"
-                          ]
+                          "enum": ["t", "GJ", "MWh", "tis. m3"]
                         },
                         "vyhrevnostHodnota": {
                           "anyOf": [
@@ -105,10 +93,7 @@
                         },
                         "vyhrevnostJednotka": {
                           "type": "string",
-                          "enum": [
-                            "GJ/t",
-                            "MJ/m3"
-                          ]
+                          "enum": ["GJ/t", "MJ/m3"]
                         },
                         "porizeniPalivaCelkem": {
                           "anyOf": [
@@ -257,9 +242,7 @@
               },
               "e1TechnologieKvet": {
                 "type": "object",
-                "required": [
-                  "pocetTechnologii"
-                ],
+                "required": ["pocetTechnologii"],
                 "properties": {
                   "technologieKvet": {
                     "type": "array",
@@ -354,10 +337,7 @@
                         },
                         "bilanceZdroju": {
                           "type": "string",
-                          "enum": [
-                            "elektro",
-                            "teplo"
-                          ]
+                          "enum": ["elektro", "teplo"]
                         },
                         "bilancniRozdil": {
                           "anyOf": [
@@ -460,10 +440,7 @@
                         },
                         "bilanceDodavek": {
                           "type": "string",
-                          "enum": [
-                            "elektro",
-                            "teplo"
-                          ]
+                          "enum": ["elektro", "teplo"]
                         },
                         "zemedelstviALesnictvi": {
                           "anyOf": [
@@ -512,10 +489,7 @@
                       "properties": {
                         "typ": {
                           "type": "string",
-                          "enum": [
-                            "elektro",
-                            "teplo"
-                          ]
+                          "enum": ["elektro", "teplo"]
                         },
                         "ztraty": {
                           "anyOf": [
@@ -646,10 +620,7 @@
               },
               "e1TechnologieAInstalovanyVykonVyrobny": {
                 "type": "object",
-                "required": [
-                  "licencovanyCelkovyInstalovanyElektrickyVykonMWe",
-                  "licencovanyCelkovyInstalovanyTepelnyVykonMWt"
-                ],
+                "required": ["licencovanyCelkovyInstalovanyElektrickyVykonMWe", "licencovanyCelkovyInstalovanyTepelnyVykonMWt"],
                 "properties": {
                   "kraj": {
                     "type": "string",
@@ -678,14 +649,7 @@
                   },
                   "pripojenoKPsDs": {
                     "type": "string",
-                    "enum": [
-                      "ČEPS, a.s.",
-                      "ČEZ Distribuce, a.s.",
-                      "EG.D, a.s.",
-                      "PREdistribuce, a.s.",
-                      "UCED Chomutov s.r.o.",
-                      "Jiná"
-                    ]
+                    "enum": ["ČEPS, a.s.", "ČEZ Distribuce, a.s.", "EG.D, a.s.", "PREdistribuce, a.s.", "UCED Chomutov s.r.o.", "Jiná"]
                   },
                   "technologieVyrobny": {
                     "type": "string",
@@ -752,15 +716,11 @@
               },
               "typVykazu": {
                 "type": "string",
-                "enum": [
-                  "E1"
-                ]
+                "enum": ["E1"]
               },
               "typPeriody": {
                 "type": "string",
-                "enum": [
-                  "MONTH"
-                ]
+                "enum": ["MONTH"]
               },
               "cisloLicence": {
                 "type": "array",
@@ -799,9 +759,6 @@
       }
     }
   },
-  "required": [
-    "typVykazu",
-    "vykazy"
-  ],
+  "required": ["typVykazu", "vykazy"],
   "additionalProperties": false
 }

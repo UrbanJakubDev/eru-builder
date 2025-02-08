@@ -96,7 +96,7 @@ const EruConverter = () => {
       <h2>ERU T1 Converter</h2>
 
       <div className="mb-4">
-        <button onClick={handleDownloadTemplate} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        <button onClick={handleDownloadTemplate} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-sm">
           Download Template XLSX
         </button>
       </div>
@@ -113,7 +113,7 @@ const EruConverter = () => {
         <select
           value={selectedQuarter}
           onChange={e => setSelectedQuarter(e.target.value)}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-xs focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
         >
           <option value="Q1">Q1 (Jan-Mar)</option>
           <option value="Q2">Q2 (Apr-Jun)</option>

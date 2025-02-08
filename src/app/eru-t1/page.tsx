@@ -1,44 +1,38 @@
 'use client'
 import { useState } from 'react'
 import { EruT1 } from '@/utils/eru_t1.js' // We'll modify eru_e1.js to be a module
+import JsonPreview from '@/components/jsonPreview/jsonPreview'
+import JsonPreviewHeader from '@/components/jsonPreview/header'
+import Section from '@/components/section'
 import { toast } from 'react-toastify'
+import Form from '@/components/form/index'
 
 const EruConverter = () => {
-  const [file, setFile] = useState(null)
   const [jsonResult, setJsonResult] = useState(null)
   const [selectedQuarter, setSelectedQuarter] = useState('Q1')
-  const [eruHandler, setEruHandler] = useState(null)
-
-  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const uploadedFile = event.target.files?.[0]
-    if (uploadedFile) {
-      setFile(uploadedFile)
-      try {
-        const handler = new EruT1()
-        const arrayBuffer = await uploadedFile.arrayBuffer()
-        handler.readFile(arrayBuffer)
-        setEruHandler(handler)
-      } catch (err) {
-        toast.error('Error analyzing file: ' + err.message)
-      }
-    }
-  }
+  const [file, setFile] = useState(null)
+  const [loading, setLoading] = useState(false)
 
   const handleConvert = async () => {
+    setLoading(true)
     try {
       const handler = new EruT1()
       handler.setQuarter(selectedQuarter)
 
-      const arrayBuffer = await file.arrayBuffer()
+      const arrayBuffer = await file?.arrayBuffer()
       const data = handler.readFile(arrayBuffer)
 
       handler.makeStatement()
       const result = handler.generateStatements()
 
       setJsonResult(result)
+
+      // Add delay to show loading state
     } catch (err) {
-      toast.error(err.message)
+      toast.error((err as Error).message)
       setJsonResult(null)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -92,43 +86,26 @@ const EruConverter = () => {
   }
 
   return (
-    <div className="eru-converter">
-      <h2>ERU T1 Converter</h2>
+    <div className="grid grid-cols-6 gap-4 p-4">
+      <Section className="col-span-2">
+        <JsonPreviewHeader
+          title="ERU T1 Converter"
+          buttonText="Stáhnout šablonu XLSX"
+          handleDownloadJson={handleDownloadTemplate} />
 
-      <div className="mb-4">
-        <button onClick={handleDownloadTemplate} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-sm">
-          Download Template XLSX
-        </button>
-      </div>
+        <Form
+          handleConvert={handleConvert}
+          selectedQuarter={selectedQuarter}
+          setSelectedQuarter={setSelectedQuarter}
+          file={file}
+          setFile={setFile}
+          loading={loading}
+        />
+      </Section>
 
-      <div className="file-input">
-        <input type="file" accept=".xlsx,.xlsm,.numbers" onChange={handleFileChange} />
-        <button onClick={handleConvert} disabled={!file}>
-          Convert to JSON
-        </button>
-      </div>
-
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">Select Quarter</label>
-        <select
-          value={selectedQuarter}
-          onChange={e => setSelectedQuarter(e.target.value)}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-xs focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-        >
-          <option value="Q1">Q1 (Jan-Mar)</option>
-          <option value="Q2">Q2 (Apr-Jun)</option>
-          <option value="Q3">Q3 (Jul-Sep)</option>
-          <option value="Q4">Q4 (Oct-Dec)</option>
-        </select>
-      </div>
-
-      {jsonResult && (
-        <div className="result-preview">
-          <h3>Preview:</h3>
-          <button onClick={() => downloadJson(jsonResult)}>Download JSON</button>
-          <pre>{JSON.stringify(jsonResult, null, 2)}</pre>
-        </div>
-      )}
+      <Section className="col-span-4">
+        {jsonResult && <JsonPreview jsonData={jsonResult} downloadJson={downloadJson} />}
+      </Section>
     </div>
   )
 }

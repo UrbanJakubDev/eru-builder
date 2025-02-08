@@ -150,7 +150,7 @@ export class EruT1 {
   // Add new validation method
   validateQuarterData(data) {
     if (!this.quarter) {
-      throw new Error('Quarter not selected. Please select a quarter before uploading data.')
+      throw new Error('Čtvrtletí není vybráno. Vyberte čtvrtletí před nahráním dat.')
     }
 
     const expectedMonths = this.quarters[`Q${this.quarter}`]
@@ -158,12 +158,12 @@ export class EruT1 {
 
     const invalidMonths = dataMonths.filter(month => !expectedMonths.includes(month))
     if (invalidMonths.length > 0) {
-      throw new Error(`Data contains months (${invalidMonths.join(', ')}) that don't belong to Q${this.quarter} ` + `(expected months: ${expectedMonths.join(', ')})`)
+      throw new Error(`Data obsahují měsíce (${invalidMonths.join(', ')}) které nepatří do Q${this.quarter} ` + `(očekávané měsíce: ${expectedMonths.join(', ')})`)
     }
 
     const missingMonths = expectedMonths.filter(month => !dataMonths.includes(month))
     if (missingMonths.length > 0) {
-      throw new Error(`Data is missing months (${missingMonths.join(', ')}) for Q${this.quarter}`)
+      throw new Error(`Data chybí měsíce (${missingMonths.join(', ')}) pro Q${this.quarter}`)
     }
   }
 

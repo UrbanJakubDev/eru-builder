@@ -1,5 +1,4 @@
-import Link from 'next/link'
-import MainLayout from '@/layouts/MainLayout'
+
 import StatementLinkCard from '@/components/statementLinkCard'
 
 const Home = () => {
@@ -34,8 +33,17 @@ const Home = () => {
               </p>
             </div>
           </article>
+
+          <article className="mt-8">
+            <div className="text-xs text-gray-400">
+              <p>Pro technickou podporu:</p>
+              <p className="mt-1">
+                <a href="mailto:urbanjakubdev@gmail.com" className="text-gray-400 hover:underline">urbanjakubdev@gmail.com</a> | <a href="https://github.com/UrbanJakubDev" className="text-gray-400 hover:underline">GitHub</a>
+              </p>
+            </div>
+          </article>
         </section>
-        <section className="w-full flex flex-col gap-8 justify-center items-center">
+        <section className="w-full flex flex-col gap-8 justify-start items-center">
           <StatementLinkCard title="Eru E1" description="Generátor JSON pro výkaz ERU-E1" link="/eru-e1" />
           <StatementLinkCard title="Eru T1" description="Generátor JSON pro výkaz ERU-T1" link="/eru-t1" />
         </section>

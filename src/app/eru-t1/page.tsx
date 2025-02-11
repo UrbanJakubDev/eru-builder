@@ -8,9 +8,9 @@ import { toast } from 'react-toastify'
 import Form from '@/components/form/index'
 
 const EruConverter = () => {
-  const [jsonResult, setJsonResult] = useState(null)
+  const [jsonResult, setJsonResult] = useState<any>(null)
   const [selectedQuarter, setSelectedQuarter] = useState('Q1')
-  const [file, setFile] = useState(null)
+  const [file, setFile] = useState<File | null>(null)
   const [loading, setLoading] = useState(false)
 
   const handleConvert = async () => {
@@ -19,7 +19,11 @@ const EruConverter = () => {
       const handler = new EruT1()
       handler.setQuarter(selectedQuarter)
 
-      const arrayBuffer = await file?.arrayBuffer()
+      if (!file) {
+        throw new Error('Please select a file')
+      }
+
+      const arrayBuffer = await file.arrayBuffer()
       const data = handler.readFile(arrayBuffer)
 
       handler.makeStatement()
@@ -89,7 +93,7 @@ const EruConverter = () => {
     <div className="grid grid-cols-6 gap-4 p-4">
       <Section className="col-span-2">
         <JsonPreviewHeader
-          title="ERU T1 Converter"
+          title="ERU-T1 Generátor"
           buttonText="Stáhnout šablonu XLSX"
           handleDownloadJson={handleDownloadTemplate} />
 
@@ -101,6 +105,41 @@ const EruConverter = () => {
           setFile={setFile}
           loading={loading}
         />
+
+        <details className="mt-4">
+          <summary className="text-lg font-bold cursor-pointer">Obecné informace</summary>
+          <div className="mt-2">
+            <p className="text-sm text-gray-600 mb-4">
+              Zdrojový soubor umožnuje vygenerovat hromadný import dat do dataportu ERU, pro výkaz ERU-T1, za čtvrtletí.
+              Data se generují pro měsíc, kraj a palivo. Měsíce musí být ve zvoleném čtvrtletí.
+            </p>
+          </div>
+        </details>
+        <details className="mt-4">
+          <summary className="text-lg font-bold cursor-pointer">Návod k použití ERU-T1 Konvertoru</summary>
+          <div className="mt-2">
+            <p className="text-sm text-gray-600 mb-4">
+              1. Stáhněte si šablonu: Nejprve klikněte na tlačítko "Stáhnout šablonu XLSX" pro stažení vzorového souboru. Tento soubor obsahuje strukturu, kterou je třeba dodržet při vkládání vašich dat.
+            </p>
+            <p className="text-sm text-gray-600 mb-4">
+              2. Vyplňte data: Otevřete stažený soubor v aplikaci, která podporuje formát XLSX (např. Microsoft Excel). Vložte vaše data do příslušných sloupců. Ujistěte se, že zachováte následující sloupce a řádky:
+            </p>
+            <ul className="list-disc pl-5 text-sm text-gray-600">
+              <li>Sloupec A: [Název sloupce] - Popis, co by měl obsahovat.</li>
+              <li>Sloupec B: [Název sloupce] - Popis, co by měl obsahovat.</li>
+              <li>Řádek 1: Musí obsahovat hlavičky sloupců, které nesmí být změněny.</li>
+            </ul>
+            <p className="text-sm text-gray-600 mb-4">
+              3. Nahrajte soubor: Po vyplnění dat se vraťte na tuto stránku a nahrajte upravený soubor pomocí formuláře.
+            </p>
+            <p className="text-sm text-gray-600 mb-4">
+              4. Spusťte konverzi: Klikněte na tlačítko "Convert" pro spuštění konverze. Během konverze se zobrazí indikátor načítání.
+            </p>
+            <p className="text-sm text-gray-600 mb-4">
+              5. Stáhněte výsledky: Po úspěšné konverzi si můžete stáhnout výsledný JSON soubor, který obsahuje zpracovaná data.
+            </p>
+          </div>
+        </details>
       </Section>
 
       <Section className="col-span-4">

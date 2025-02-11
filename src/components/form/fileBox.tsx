@@ -16,10 +16,10 @@ export default function FileBox({ handleFileChange, handleConvert, file, loading
             <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-200/25 px-6 py-10">
                 <div className="text-center">
                     <div className="flex justify-center items-center">
-                        <RiFileExcel2Line className="text-indigo-600 text-4xl" />
+                        <RiFileExcel2Line className="text-brand text-4xl" />
                     </div>
                     <div className="mt-4 flex text-sm/6 text-gray-600 justify-center gap-1">
-                        <label htmlFor="file-upload" className="relative cursor-pointer rounded-md  font-semibold text-indigo-600 focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 focus-within:outline-hidden hover:text-indigo-500">
+                        <label htmlFor="file-upload" className="relative cursor-pointer rounded-md  font-semibold text-brand focus-within:ring-2 focus-within:ring-brand focus-within:ring-offset-2 focus-within:outline-hidden hover:text-indigo-500">
                             <span>Nahrajte soubor</span>
                             <input
                                 id="file-upload"

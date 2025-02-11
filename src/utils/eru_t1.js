@@ -91,9 +91,9 @@ export class EruT1 {
       typPeriody: 'QUARTER',
       cisloLicence: fieldMap.get('cisloLicence')
         ? fieldMap
-            .get('cisloLicence')
-            .split(',')
-            .map(l => l.trim())
+          .get('cisloLicence')
+          .split(',')
+          .map(l => l.trim())
         : [],
       vykazovanyRok: Number(fieldMap.get('vykazovanyRok')) || new Date().getFullYear(),
       vykazovanaPerioda: this.quarter,
@@ -353,10 +353,33 @@ export class EruT1 {
     // Create worksheet with transposed data
     const userDataWs = xlsxUtils.aoa_to_sheet(userDataFields)
 
-    // Set column widths for UserData (now we need only 2 columns)
+    // Set column widths for UserData
     userDataWs['!cols'] = [
       { wch: 20 }, // Field names
       { wch: 40 } // Values
+    ]
+
+    // Create Kraje worksheet
+    const regions = require('./enums/regions.json')
+    const krajeHeaders = ['code', 'name']
+    const krajeData = regions.regions.map((name, index) => [index + 1, name])
+    const krajeWs = xlsxUtils.aoa_to_sheet([krajeHeaders, ...krajeData])
+
+    // Create Fuels worksheet
+    const fuels = require('./enums/fuels.json')
+    const fuelsHeaders = ['code', 'name']
+    const fuelsData = fuels.fuels.map((name, index) => [index + 1, name])
+    const fuelsWs = xlsxUtils.aoa_to_sheet([fuelsHeaders, ...fuelsData])
+
+    // Set column widths for both sheets
+    krajeWs['!cols'] = [
+      { wch: 10 }, // code
+      { wch: 30 } // name
+    ]
+
+    fuelsWs['!cols'] = [
+      { wch: 10 }, // code
+      { wch: 30 } // name
     ]
 
     // Create ExportERU worksheet
@@ -417,12 +440,14 @@ export class EruT1 {
     }))
     dataWs['!cols'] = dataColWidths
 
-    // Create workbook with both sheets
+    // Create workbook with all three sheets
     const wb = {
-      SheetNames: ['UserData', 'ExportERU'],
+      SheetNames: ['UserData', 'ExportERU', 'Kraje', 'Fuels'],
       Sheets: {
         UserData: userDataWs,
-        ExportERU: dataWs
+        ExportERU: dataWs,
+        Kraje: krajeWs,
+        Fuels: fuelsWs
       }
     }
 

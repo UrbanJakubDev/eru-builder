@@ -29,7 +29,7 @@ export default function Navigation() {
                     <Link 
                         key={route.href}
                         href={route.href}
-                        className={`font-bold ${pathname === route.href ? 'text-indigo-600 underline' : ''}`}
+                        className={`font-bold uppercase ${pathname === route.href ? 'text-brand underline' : ''}`}
                     >
                         {route.label}
                     </Link>

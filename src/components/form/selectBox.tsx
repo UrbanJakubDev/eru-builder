@@ -4,7 +4,7 @@ export default function SelectBox({ selectedQuarter, setSelectedQuarter }: { sel
             <select
                 value={selectedQuarter}
                 onChange={e => setSelectedQuarter(e.target.value)}
-                className="mt-1 p-4 block w-full rounded-md bg-transparent text-indigo-600 border-2 border-indigo-600/25 hover:border-indigo-500 hover:text-indigo-500 focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2 focus:outline-none sm:text-sm"
+                className="mt-1 p-4 block w-full rounded-md bg-transparent text-brand border-2 border-brand/25 hover:border-indigo-500 hover:text-indigo-500 focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:outline-none sm:text-sm"
             >
                 <option value="Q1">Q1 (Led-Bře)</option>
                 <option value="Q2">Q2 (Úno-Kvě)</option>

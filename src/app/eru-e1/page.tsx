@@ -1,11 +1,13 @@
 'use client'
 import React, { useState } from 'react'
 import { EruE1 } from '@/utils/eru_e1.js' // We'll modify eru_e1.js to be a module
+import UnderConstruction from '@/components/underConstruction'
 
 const EruConverter = () => {
   const [file, setFile] = useState(null)
-  const [jsonResult, setJsonResult] = useState(null)
-  const [error, setError] = useState(null)
+  const [jsonResult, setJsonResult] = useState<{ typVykazu: string; vykazy: any[] } | null>(null)
+  const [error, setError] = useState<string | null>(null)
+  const [inConstruction, setInConstruction] = useState(true)
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const uploadedFile = event.target.files?.[0]
@@ -36,7 +38,8 @@ const EruConverter = () => {
       // Optional: download the JSON file
       // downloadJson(result);
     } catch (err) {
-      setError('Error processing file: ' + err.message)
+      const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred'
+      setError('Error processing file: ' + errorMessage)
       console.error(err)
     }
   }
@@ -72,6 +75,10 @@ const EruConverter = () => {
       console.error('Error downloading JSON:', error)
       alert('Error creating JSON file. Check console for details.')
     }
+  }
+
+  if (inConstruction) {
+    return <UnderConstruction size="large" />
   }
 
   return (

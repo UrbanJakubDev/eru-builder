@@ -3,6 +3,7 @@
 @theme {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-brand: oklch(66.91% 0.2355 360)
 }
 
 /*

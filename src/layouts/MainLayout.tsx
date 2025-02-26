@@ -5,7 +5,7 @@ import Toast from '@/components/toas'
 const MainLayout = ({ children }: { children: ReactNode }) => {
   return (
     <>
-      <div className="flex flex-col min-h-screen">
+      <div className="flex flex-col min-h-screen bg-zinc-100">
         <Header />
         <main className="flex-grow w-full max-w-screen-2xl mx-auto justify-center items-center py-4">
           {children}

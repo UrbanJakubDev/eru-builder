@@ -3,9 +3,9 @@ import StatementLinkCard from '@/components/statementLinkCard'
 
 const Home = () => {
   return (
-    <div className="min-w-full min-h-full flex justify-center items-center translate-y-2/5">
-      <div className="grid grid-cols-2 gap-4 ">
-        <section className="">
+    <div className='pt-8 px-8'>
+      <div className="grid xl:grid-cols-2 gap-12 xl:gap-4">
+        <section>
           <article className="mb-4">
             <p className="text-xl text-justify">
               GVE (Generátor výkazů ERU) je nástroj pro generování JSON souborů pro výkazy ERU-E1 a ERU-T1. Aplikace umožňuje snadnou konverzi dat z Excel souborů do formátu požadovaného Energetickým regulačním úřadem.
@@ -13,8 +13,8 @@ const Home = () => {
               Tento nástroj významně zjednodušuje proces přípravy výkazů pro ERÚ a minimalizuje možnost chyb při manuálním zpracování dat. Je navržen s důrazem na jednoduchost použití a spolehlivost výstupů.
             </p>
 
-            <div className="mt-16 space-y-4">
-              <p className="text-justify text-brand font-semibold">
+            <div className="mt-12 space-y-4">
+              <p className="text-justify text-brand font-semibold text-xl">
                 Důležité upozornění:
               </p>
               <p className="text-justify">
@@ -28,17 +28,14 @@ const Home = () => {
                 <li>Ověřit výstupy proti aktuální dokumentaci ERÚ</li>
                 <li>V případě pochybností kontaktovat přímo ERÚ nebo autora</li>
               </ul>
-              <p className="text-justify text-brand">
-                Upozorňujeme, že aplikace může obsahovat chyby a je poskytována "tak jak je". Autor nenese žádnou zodpovědnost za případné nesrovnalosti, chyby v reportingu či jakékoliv přímé nebo nepřímé škody způsobené použitím tohoto nástroje.
-              </p>
             </div>
           </article>
 
-          <article className="mt-8">
-            <div className="text-xs text-gray-400">
+          <article className="mt-12">
+            <div className="text-xs text-gray-500">
               <p>Pro technickou podporu:</p>
               <p className="mt-1">
-                <a href="mailto:urbanjakubdev@gmail.com" className="text-gray-400 hover:underline">urbanjakubdev@gmail.com</a> | <a href="https://github.com/UrbanJakubDev" className="text-gray-400 hover:underline">GitHub</a>
+                <a href="mailto:urbanjakubdev@gmail.com" className="text-gray-500 hover:underline">urbanjakubdev@gmail.com</a> | <a href="https://github.com/UrbanJakubDev" className="text-gray-500 hover:underline">GitHub</a>
               </p>
             </div>
           </article>
@@ -48,7 +45,10 @@ const Home = () => {
           <StatementLinkCard title="Eru T1" description="Generátor JSON pro výkaz ERU-T1" link="/eru-t1" />
         </section>
       </div>
-    </div>
+        <p className="text-justify text-gray-400 text-xs mt-12 xl:mt-28">
+            **Upozorňujeme, že aplikace může obsahovat chyby a je poskytována "tak jak je". Autor nenese žádnou zodpovědnost za případné nesrovnalosti, chyby v reportingu či jakékoliv přímé nebo nepřímé škody způsobené použitím tohoto nástroje.**
+        </p>
+        </div>
   )
 }
 

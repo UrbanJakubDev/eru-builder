@@ -90,7 +90,7 @@ const EruConverter = () => {
   }
 
   return (
-    <div className="grid grid-cols-6 gap-4 p-4">
+    <div className=" flex flex-col md:grid md:grid-cols-6 gap-4 p-4">
       <Section className="col-span-2">
         <JsonPreviewHeader
           title="ERU-T1 Generátor"
@@ -142,7 +142,7 @@ const EruConverter = () => {
         </details>
       </Section>
 
-      <Section className="col-span-4">
+      <Section className="min-h-28 col-span-4">
         {jsonResult && <JsonPreview jsonData={jsonResult} downloadJson={downloadJson} />}
       </Section>
     </div>

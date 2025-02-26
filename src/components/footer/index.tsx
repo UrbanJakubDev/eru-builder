@@ -8,7 +8,7 @@ export default function Footer() {
 
 
     return (
-        <footer className="p-4 border-t-2 border-gray-500">
+        <footer className="p-4 border-t border-gray-500">
             <div className="mx-auto text-center">
                 <p className="text-gray-500">
                     &copy; {currentYear} {signature}. All rights reserved. 

@@ -21,10 +21,10 @@ export default function UnderConstruction({ size = 'large' }: UnderConstructionP
 
         return (
             <div className="eru-converter">
-                <div className="bg-orange-100 border-2 border-orange-500 rounded-lg p-6 mb-6 shadow-lg">
+                <div className="bg-orange-100 border-2 border-orange-500 rounded-lg p-6 mb-6 shadow-lg mx-8">
                     <div className="flex items-center justify-center space-x-4">
-                        <span className="text-4xl">🏗️</span>
-                        <span className="text-4xl">⚠️</span>
+                        <span className="hidden md:inline text-4xl">🏗️</span>
+                        <span className="hidden md:inline text-4xl">⚠️</span>
                         <div className="text-center">
                             <h3 className="text-2xl font-bold text-orange-700 uppercase tracking-wider">
                                 Under Construction
@@ -36,8 +36,8 @@ export default function UnderConstruction({ size = 'large' }: UnderConstructionP
                                 <span className="text-2xl">⚙️</span>
                             </div>
                         </div>
-                        <span className="text-4xl">⚠️</span>
-                        <span className="text-4xl">🏗️</span>
+                        <span className="hidden md:inline text-4xl">⚠️</span>
+                        <span className="hidden md:inline text-4xl">🏗️</span>
                     </div>
                     <p className="mt-6 text-center text-gray-600">Tato funkce je v&nbsp;fázi vývoje.</p>
                 </div>

@@ -6,7 +6,7 @@ type SectionProps = {
 
 export default function Section({ children, className }: SectionProps) {
     return (
-        <section className={`flex flex-col gap-4 border-2 border-gray-500 p-4 ${className}`}>
+        <section className={`flex flex-col gap-4 bg-white border-2 rounded-2xl border-gray-500 p-4 ${className}`}>
             {children}
         </section>
     )

@@ -28,16 +28,17 @@ export class EruE1 {
     return new Date().toISOString()
   }
 
-  makeStatement(row, date) {
+  makeStatement(row, date, kontaktniUdaje = {}) {
     const datestr = this.getDate()
     const year = date.getFullYear()
+    const { kontaktniTelefon = '+420721055966', odpovednyPracovnik = 'Jakub Urban' } = kontaktniUdaje
 
     return {
       e1vykaz: {
         e1Paliva: {
           paliva: [
             {
-              typPaliva: Palivo.ZEMNI_PLYN,
+              typPaliva: 'Zemni plyn',
               jednotkaPaliva: 'MWh',
               vyhrevnostHodnota: row['g-vyhrevnostHodnota'],
               vyhrevnostJednotka: 'MJ/m3',
@@ -66,7 +67,7 @@ export class EruE1 {
             {
               technologieKvet: 'spalovací pístový motor s rekuperací tepla',
               instalovanyTepelnyVykon: row['instalovanyTepelnyVykon'],
-              instalovanyElektrickyVykon: row['instalovanyElektrickyVykon']
+              instalovanyElektrickyVykon: parseFloat(row['instalovanyElektrickyVykon'])
             }
           ],
           pocetTechnologii: '1'
@@ -152,9 +153,9 @@ export class EruE1 {
           pripojenoKPsDs: row['pripojenoKPsDs'],
           technologieVyrobny: 'Plynová a spalovací (PSE)',
           celkovyInstalovanyTepelnyVykonMWt: row['instalovanyTepelnyVykon'],
-          celkovyInstalovanyElektrickyVykonMWe: row['instalovanyElektrickyVykon'],
+          celkovyInstalovanyElektrickyVykonMWe: parseFloat(row['instalovanyElektrickyVykon']),
           licencovanyCelkovyInstalovanyTepelnyVykonMWt: row['instalovanyTepelnyVykon'],
-          licencovanyCelkovyInstalovanyElektrickyVykonMWe: row['instalovanyElektrickyVykon']
+          licencovanyCelkovyInstalovanyElektrickyVykonMWe: parseFloat(row['instalovanyElektrickyVykon'])
         }
       },
       identifikacniUdajeVykazu: {
@@ -165,18 +166,18 @@ export class EruE1 {
         vykazovanyRok: year,
         datovaSchranka: 'n9mpdz8',
         drzitelLicence: 'ČEZ Energo, s.r.o.',
-        kontaktniTelefon: '+420721055966',
-        vykazovanaPerioda: row['vykazovanaPerioda'],
-        odpovednyPracovnik: 'Jakub Urban',
+        kontaktniTelefon,
+        vykazovanaPerioda: parseFloat(row['vykazovanaPerioda']),
+        odpovednyPracovnik,
         datumVytvoreniVykazu: datestr
       }
     }
   }
 
-  makeStatements(df, date) {
+  makeStatements(df, date, kontaktniUdaje = {}) {
     for (const row of df) {
       if (row['nazevVyrobny'] === 0) continue
-      const statement = this.makeStatement(row, date)
+      const statement = this.makeStatement(row, date, kontaktniUdaje)
       this.statements.push(statement)
     }
   }

@@ -95,28 +95,28 @@ export class EruE1 {
           ],
           bilanceDodavekAZdrojuII: [
             {
-              doprava: row['bde2-doprava'],
-              ostatni: row['bde2-ostatni'],
-              prumysl: row['bde2-prumysl'],
-              domacnosti: row['bde2-domacnosti'],
-              energetika: row['bde2-energetika'],
-              stavebnictvi: row['bde2-stavebnictvi'],
+              doprava: parseOrNull(row['bde2-doprava']),
+              ostatni: parseOrNull(row['bde2-ostatni']),
+              prumysl: parseOrNull(row['bde2-prumysl']),
+              domacnosti: parseOrNull(row['bde2-domacnosti']),
+              energetika: parseOrNull(row['bde2-energetika']),
+              stavebnictvi: parseOrNull(row['bde2-stavebnictvi']),
               bilanceDodavek: 'elektro',
-              zemedelstviALesnictvi: row['bde2-zemedelstviALesnictvi'],
-              dodavkyObchodnimSubjektum: row['bde2-dodavkyObchodnimSubjektum'],
-              obchodSluzbySkolstviZdravotnictvi: row['bde2-obchodSluzbySkolstviZdravotnictvi']
+              zemedelstviALesnictvi: parseOrNull(row['bde2-zemedelstviALesnictvi']),
+              dodavkyObchodnimSubjektum: parseOrNull(row['bde2-dodavkyObchodnimSubjektum']),
+              obchodSluzbySkolstviZdravotnictvi: parseOrNull(row['bde2-obchodSluzbySkolstviZdravotnictvi'])
             },
             {
-              doprava: row['bdt2-doprava'],
-              ostatni: row['bdt2-ostatni'],
-              prumysl: row['bdt2-prumysl'],
-              domacnosti: row['bdt2-domacnosti'],
-              energetika: row['bdt2-energetika'],
-              stavebnictvi: row['bdt2-stavebnictvi'],
+              doprava: parseOrNull(row['bdt2-doprava']),
+              ostatni: parseOrNull(row['bdt2-ostatni']),
+              prumysl: parseOrNull(row['bdt2-prumysl']),
+              domacnosti: parseOrNull(row['bdt2-domacnosti']),
+              energetika: parseOrNull(row['bdt2-energetika']),
+              stavebnictvi: parseOrNull(row['bdt2-stavebnictvi']),
               bilanceDodavek: 'teplo',
-              zemedelstviALesnictvi: row['bdt2-zemedelstviALesnictvi'],
-              dodavkyObchodnimSubjektum: row['bdt2-dodavkyObchodnimSubjektum'],
-              obchodSluzbySkolstviZdravotnictvi: row['bdt2-obchodSluzbySkolstviZdravotnictvi']
+              zemedelstviALesnictvi: parseOrNull(row['bdt2-zemedelstviALesnictvi']),
+              dodavkyObchodnimSubjektum: parseOrNull(row['bdt2-dodavkyObchodnimSubjektum']),
+              obchodSluzbySkolstviZdravotnictvi: parseOrNull(row['bdt2-obchodSluzbySkolstviZdravotnictvi'])
             }
           ]
         },
@@ -188,4 +188,11 @@ export class EruE1 {
       vykazy: this.statements
     }
   }
+}
+
+// Pomocná funkce pro převod na číslo nebo null
+function parseOrNull(val) {
+  if (val === null || val === undefined || val === '') return null
+  const num = parseFloat(val)
+  return isNaN(num) ? null : num
 }

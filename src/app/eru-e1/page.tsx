@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { EruE1 } from '@/utils/eru_e1.js' // We'll modify eru_e1.js to be a module
 import UnderConstruction from '@/components/underConstruction'
 import Section from '@/components/section'
@@ -10,9 +10,27 @@ const EruConverter = () => {
   const [jsonResult, setJsonResult] = useState<{ typVykazu: string; vykazy: any[] } | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [inConstruction, setInConstruction] = useState(false)
-  const [kontaktniTelefon, setKontaktniTelefon] = useState('+420771529378')
-  const [odpovednyPracovnik, setOdpovednyPracovnik] = useState('Nikol Doležalová')
+  const [kontaktniTelefon, setKontaktniTelefon] = useState('+420')
+  const [odpovednyPracovnik, setOdpovednyPracovnik] = useState('Odpovedny pracovnik')
   const [loading, setLoading] = useState(false)
+
+  // Načtení z localStorage při mountu
+  useEffect(() => {
+    const savedTelefon = localStorage.getItem('eru-e1-kontaktniTelefon')
+    const savedPracovnik = localStorage.getItem('eru-e1-odpovednyPracovnik')
+    if (savedTelefon) setKontaktniTelefon(savedTelefon)
+    if (savedPracovnik) setOdpovednyPracovnik(savedPracovnik)
+  }, [])
+
+  // Ukládání do localStorage při změně
+  const handleTelefonChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setKontaktniTelefon(e.target.value)
+    localStorage.setItem('eru-e1-kontaktniTelefon', e.target.value)
+  }
+  const handlePracovnikChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setOdpovednyPracovnik(e.target.value)
+    localStorage.setItem('eru-e1-odpovednyPracovnik', e.target.value)
+  }
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const uploadedFile = event.target.files?.[0]
@@ -93,26 +111,26 @@ const EruConverter = () => {
             <input type="file" accept=".xlsx,.xlsm" onChange={handleFileChange} />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-400 mb-1">
               Kontaktní telefon:
               <input
                 list="kontakty"
                 value={kontaktniTelefon}
-                onChange={e => setKontaktniTelefon(e.target.value)}
+                onChange={handleTelefonChange}
                 placeholder="Zadejte nebo vyberte telefon"
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand focus:ring focus:ring-brand focus:ring-opacity-50"
+                className="mt-1 block w-full rounded-lg border-2 border-gray-400 bg-white px-3 py-2 text-base focus:border-brand focus:ring-2 focus:ring-brand focus:outline-none transition-all"
               />
             </label>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-400 mb-1">
               Odpovědný pracovník:
               <input
                 type="text"
                 value={odpovednyPracovnik}
-                onChange={e => setOdpovednyPracovnik(e.target.value)}
+                onChange={handlePracovnikChange}
                 placeholder="Zadejte jméno"
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand focus:ring focus:ring-brand focus:ring-opacity-50"
+                className="mt-1 block w-full rounded-lg border-2 border-gray-400 bg-white px-3 py-2 text-base focus:border-brand focus:ring-2 focus:ring-brand focus:outline-none transition-all"
               />
             </label>
           </div>

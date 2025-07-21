@@ -28,16 +28,17 @@ export class EruE1 {
     return new Date().toISOString()
   }
 
-  makeStatement(row, date) {
+  makeStatement(row, date, kontaktniUdaje = {}) {
     const datestr = this.getDate()
     const year = date.getFullYear()
+    const { kontaktniTelefon = '+420721055966', odpovednyPracovnik = 'Jakub Urban' } = kontaktniUdaje
 
     return {
       e1vykaz: {
         e1Paliva: {
           paliva: [
             {
-              typPaliva: Palivo.ZEMNI_PLYN,
+              typPaliva: 'Zemni plyn',
               jednotkaPaliva: 'MWh',
               vyhrevnostHodnota: row['g-vyhrevnostHodnota'],
               vyhrevnostJednotka: 'MJ/m3',
@@ -66,7 +67,7 @@ export class EruE1 {
             {
               technologieKvet: 'spalovací pístový motor s rekuperací tepla',
               instalovanyTepelnyVykon: row['instalovanyTepelnyVykon'],
-              instalovanyElektrickyVykon: row['instalovanyElektrickyVykon']
+              instalovanyElektrickyVykon: parseFloat(row['instalovanyElektrickyVykon'])
             }
           ],
           pocetTechnologii: '1'
@@ -94,28 +95,28 @@ export class EruE1 {
           ],
           bilanceDodavekAZdrojuII: [
             {
-              doprava: row['bde2-doprava'],
-              ostatni: row['bde2-ostatni'],
-              prumysl: row['bde2-prumysl'],
-              domacnosti: row['bde2-domacnosti'],
-              energetika: row['bde2-energetika'],
-              stavebnictvi: row['bde2-stavebnictvi'],
+              doprava: parseOrNull(row['bde2-doprava']),
+              ostatni: parseOrNull(row['bde2-ostatni']),
+              prumysl: parseOrNull(row['bde2-prumysl']),
+              domacnosti: parseOrNull(row['bde2-domacnosti']),
+              energetika: parseOrNull(row['bde2-energetika']),
+              stavebnictvi: parseOrNull(row['bde2-stavebnictvi']),
               bilanceDodavek: 'elektro',
-              zemedelstviALesnictvi: row['bde2-zemedelstviALesnictvi'],
-              dodavkyObchodnimSubjektum: row['bde2-dodavkyObchodnimSubjektum'],
-              obchodSluzbySkolstviZdravotnictvi: row['bde2-obchodSluzbySkolstviZdravotnictvi']
+              zemedelstviALesnictvi: parseOrNull(row['bde2-zemedelstviALesnictvi']),
+              dodavkyObchodnimSubjektum: parseOrNull(row['bde2-dodavkyObchodnimSubjektum']),
+              obchodSluzbySkolstviZdravotnictvi: parseOrNull(row['bde2-obchodSluzbySkolstviZdravotnictvi'])
             },
             {
-              doprava: row['bdt2-doprava'],
-              ostatni: row['bdt2-ostatni'],
-              prumysl: row['bdt2-prumysl'],
-              domacnosti: row['bdt2-domacnosti'],
-              energetika: row['bdt2-energetika'],
-              stavebnictvi: row['bdt2-stavebnictvi'],
+              doprava: parseOrNull(row['bdt2-doprava']),
+              ostatni: parseOrNull(row['bdt2-ostatni']),
+              prumysl: parseOrNull(row['bdt2-prumysl']),
+              domacnosti: parseOrNull(row['bdt2-domacnosti']),
+              energetika: parseOrNull(row['bdt2-energetika']),
+              stavebnictvi: parseOrNull(row['bdt2-stavebnictvi']),
               bilanceDodavek: 'teplo',
-              zemedelstviALesnictvi: row['bdt2-zemedelstviALesnictvi'],
-              dodavkyObchodnimSubjektum: row['bdt2-dodavkyObchodnimSubjektum'],
-              obchodSluzbySkolstviZdravotnictvi: row['bdt2-obchodSluzbySkolstviZdravotnictvi']
+              zemedelstviALesnictvi: parseOrNull(row['bdt2-zemedelstviALesnictvi']),
+              dodavkyObchodnimSubjektum: parseOrNull(row['bdt2-dodavkyObchodnimSubjektum']),
+              obchodSluzbySkolstviZdravotnictvi: parseOrNull(row['bdt2-obchodSluzbySkolstviZdravotnictvi'])
             }
           ]
         },
@@ -152,9 +153,9 @@ export class EruE1 {
           pripojenoKPsDs: row['pripojenoKPsDs'],
           technologieVyrobny: 'Plynová a spalovací (PSE)',
           celkovyInstalovanyTepelnyVykonMWt: row['instalovanyTepelnyVykon'],
-          celkovyInstalovanyElektrickyVykonMWe: row['instalovanyElektrickyVykon'],
+          celkovyInstalovanyElektrickyVykonMWe: parseFloat(row['instalovanyElektrickyVykon']),
           licencovanyCelkovyInstalovanyTepelnyVykonMWt: row['instalovanyTepelnyVykon'],
-          licencovanyCelkovyInstalovanyElektrickyVykonMWe: row['instalovanyElektrickyVykon']
+          licencovanyCelkovyInstalovanyElektrickyVykonMWe: parseFloat(row['instalovanyElektrickyVykon'])
         }
       },
       identifikacniUdajeVykazu: {
@@ -165,18 +166,18 @@ export class EruE1 {
         vykazovanyRok: year,
         datovaSchranka: 'n9mpdz8',
         drzitelLicence: 'ČEZ Energo, s.r.o.',
-        kontaktniTelefon: '+420721055966',
-        vykazovanaPerioda: row['vykazovanaPerioda'],
-        odpovednyPracovnik: 'Jakub Urban',
+        kontaktniTelefon,
+        vykazovanaPerioda: parseFloat(row['vykazovanaPerioda']),
+        odpovednyPracovnik,
         datumVytvoreniVykazu: datestr
       }
     }
   }
 
-  makeStatements(df, date) {
+  makeStatements(df, date, kontaktniUdaje = {}) {
     for (const row of df) {
       if (row['nazevVyrobny'] === 0) continue
-      const statement = this.makeStatement(row, date)
+      const statement = this.makeStatement(row, date, kontaktniUdaje)
       this.statements.push(statement)
     }
   }
@@ -187,4 +188,11 @@ export class EruE1 {
       vykazy: this.statements
     }
   }
+}
+
+// Pomocná funkce pro převod na číslo nebo null
+function parseOrNull(val) {
+  if (val === null || val === undefined || val === '') return null
+  const num = parseFloat(val)
+  return isNaN(num) ? null : num
 }

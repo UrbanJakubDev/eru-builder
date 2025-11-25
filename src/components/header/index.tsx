@@ -9,9 +9,11 @@ export default function Header() {
     const pathname = usePathname()
 
     return (
-        <header className="p-4 border-b-2 border-gray-500 flex justify-between items-center text-gray-200">
-            <Logo />
-            {pathname !== '/' && <Navigation />}
+        <header className="sticky top-0 z-50 w-full border-b border-gray-800 bg-gray-950/80 backdrop-blur-md">
+            <div className="max-w-screen-2xl mx-auto px-4 h-16 flex justify-between items-center">
+                <Logo />
+                <Navigation />
+            </div>
         </header>
 
     )

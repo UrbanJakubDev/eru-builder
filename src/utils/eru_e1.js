@@ -1,4 +1,4 @@
-import { read, utils } from 'xlsx'
+import { read, utils, write } from 'xlsx'
 
 export class EruE1 {
   constructor() {
@@ -187,6 +187,129 @@ export class EruE1 {
       typVykazu: 'E1',
       vykazy: this.statements
     }
+  }
+
+  generateTemplate() {
+    const headers = [
+      'kraj',
+      'idVyrobny',
+      'nazevVyrobny',
+      'pripojenoKPsDs',
+      'instalovanyTepelnyVykon',
+      'instalovanyElektrickyVykon',
+      'g-vyhrevnostHodnota',
+      'g-porizeniPalivaCelkem',
+      'g-spotrebaPalivaVyrobaTepla',
+      'g-spotrebaPalivaVyrobaElektriny',
+      'vsazkaPalivaHodnota',
+      'vyrobaElektrinyBrutto',
+      'dodavkaUzitecnehoTepla',
+      'bde1-ztraty',
+      'bde1-nakupOdber',
+      'bde1-vlastniSpotrebaCelkem',
+      'bde1-spotrebaElektrinyNaPrecerpavaniVPve',
+      'bdt1-ztraty',
+      'bdt1-nakupOdber',
+      'bdt1-vlastniSpotrebaCelkem',
+      'bde2-doprava',
+      'bde2-ostatni',
+      'bde2-prumysl',
+      'bde2-domacnosti',
+      'bde2-energetika',
+      'bde2-stavebnictvi',
+      'bde2-zemedelstviALesnictvi',
+      'bde2-dodavkyObchodnimSubjektum',
+      'bde2-obchodSluzbySkolstviZdravotnictvi',
+      'bdt2-doprava',
+      'bdt2-ostatni',
+      'bdt2-prumysl',
+      'bdt2-domacnosti',
+      'bdt2-energetika',
+      'bdt2-stavebnictvi',
+      'bdt2-zemedelstviALesnictvi',
+      'bdt2-dodavkyObchodnimSubjektum',
+      'bdt2-obchodSluzbySkolstviZdravotnictvi',
+      've-ztraty',
+      've-bruttoVyroba',
+      've-primeDodavkyCizimSubjektum',
+      've-dodavkyDoVlastnihoPodnikuNeboZarizeni',
+      've-technologickaVlastniSpotrebaNaVyrobuTepla',
+      've-technologickaVlastniSpotrebaNaVyrobuElektriny',
+      'vt-ztraty',
+      'vt-bruttoVyroba',
+      'vt-primeDodavkyCizimSubjektum',
+      'vt-dodavkyDoVlastnihoPodnikuNeboZarizeni',
+      'vt-technologickaVlastniSpotrebaNaVyrobuTepla',
+      'vt-technologickaVlastniSpotrebaNaVyrobuElektriny',
+      'vykazovanaPerioda'
+    ]
+
+    const sampleRow = [
+      'Středočeský',
+      'ID-001',
+      'Výrobna A',
+      'ANO',
+      5,
+      2.5,
+      35.2,
+      120,
+      90,
+      30,
+      100,
+      80,
+      60,
+      1,
+      5,
+      2,
+      0,
+      0.5,
+      1.2,
+      0.3,
+      0.1,
+      0.2,
+      0.2,
+      0.1,
+      0.1,
+      0.1,
+      0.05,
+      0.02,
+      0.02,
+      0.08,
+      0.03,
+      0.04,
+      0.04,
+      0.02,
+      0.02,
+      0.02,
+      0.05,
+      0.03,
+      0.02,
+      40,
+      300,
+      50,
+      10,
+      5,
+      15,
+      20,
+      150,
+      35,
+      12,
+      6,
+      15,
+      1
+    ]
+
+    const worksheet = utils.aoa_to_sheet([headers, sampleRow])
+    worksheet['!cols'] = headers.map(header => ({ wch: Math.max(header.length + 2, 14) }))
+
+    const workbook = {
+      SheetNames: ['ERU-E1'],
+      Sheets: {
+        'ERU-E1': worksheet
+      }
+    }
+
+    return write(workbook, { type: 'array', bookType: 'xlsx' })
   }
 }
 

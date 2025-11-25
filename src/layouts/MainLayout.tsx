@@ -7,7 +7,7 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
     <>
       <div className="flex flex-col min-h-screen">
         <Header />
-        <main className="flex-grow w-full max-w-screen-2xl mx-auto justify-center items-center py-4">
+        <main className="flex-grow flex flex-col w-full max-w-screen-2xl mx-auto items-center py-8 px-4">
           {children}
         </main>
         <Footer />

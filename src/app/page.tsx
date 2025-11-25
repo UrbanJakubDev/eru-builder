@@ -1,56 +1,48 @@
-import StatementLinkCard from '@/components/statementLinkCard'
+import Link from 'next/link'
+import { FaBolt, FaFileInvoice, FaExclamationTriangle } from 'react-icons/fa'
 
 const Home = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center py-8">
-      <div className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 gap-8 px-4">
-        {/* Levý panel */}
-        <section className=" border border-gray-500  rounded-xl p-8 flex flex-col justify-between shadow-lg">
-          <article>
-            <h1 className="text-3xl font-bold text-brand mb-6">GVE (Generátor výkazů ERU)</h1>
-            <p className="text-lg text-gray-200 text-justify mb-8">
-              GVE je nástroj pro generování JSON souborů pro výkazy ERU-E1 a ERU-T1. Aplikace umožňuje snadnou konverzi dat z Excel souborů do formátu požadovaného Energetickým
-              regulačním úřadem. Tento nástroj významně zjednodušuje proces přípravy výkazů pro ERÚ a minimalizuje možnost chyb při manuálním zpracování dat. Je navržen s důrazem
-              na jednoduchost použití a spolehlivost výstupů.
-            </p>
-            <div className="bg-gray-800 border-l-4 border-brand p-4 mb-8 rounded">
-              <p className="text-brand font-semibold mb-2">Důležité upozornění:</p>
-              <ul className="list-disc list-inside text-gray-300 text-sm mb-2">
-                <li>Energetický regulační úřad (ERÚ) může kdykoliv upravit své požadavky a specifikace pro předávání dat.</li>
-                <li>I přes naši snahu o aktualizaci tohoto nástroje mohou změny ERÚ dočasně ovlivnit správnost generovaných výstupů.</li>
-              </ul>
-              <p className="text-gray-300 text-sm mb-1">Proto důrazně doporučujeme:</p>
-              <ul className="list-disc list-inside text-gray-300 text-sm mb-2">
-                <li>Vždy důkladně zkontrolovat vygenerované JSON soubory před jejich odesláním</li>
-                <li>Ověřit výstupy proti aktuální dokumentaci ERÚ</li>
-                <li>V případě pochybností kontaktovat přímo ERÚ nebo autora</li>
-              </ul>
-              <p className="text-gray-400 text-xs mt-2">
-                Aplikace je poskytována "tak jak je". Autor nenese žádnou zodpovědnost za případné nesrovnalosti, chyby v reportingu či jakékoliv škody způsobené použitím tohoto
-                nástroje.
-              </p>
+    <div className="min-h-[80vh] flex flex-col items-center justify-center p-8">
+      <div className="text-center mb-12">
+        <h1 className="text-4xl md:text-5xl font-bold text-brand mb-4">CHP Statement Tools</h1>
+        <small className="text-gray-400">
+          Tato aplikace je určena pouze pro generování výkazů pro výrobny s Kogeneranční jednotkou. Aplikace není oficiální nástroj Energetického regulačního úřadu nebo Operátora
+          trhu s elektřinou.
+        </small>
+        <p className="text-xl text-gray-400">Vyberte oblast pro kterou chcete generovat výkazy</p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl">
+        <Link
+          href="/eru"
+          className="group relative overflow-hidden rounded-2xl border border-gray-700 bg-gray-900/50 p-8 hover:border-brand/50 transition-all duration-300 hover:shadow-[0_0_30px_-5px_var(--color-brand)]"
+        >
+          <div className="absolute inset-0 bg-gradient-to-br from-brand/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+          <div className="relative z-10 flex flex-col items-center text-center">
+            <div className="mb-6 p-4 rounded-full bg-gray-800 group-hover:bg-brand/20 transition-colors">
+              <FaBolt className="w-12 h-12 text-brand" />
             </div>
-          </article>
-          <article className="mt-8">
-            <div className="bg-gray-800 rounded p-4 text-xs text-gray-400">
-              <p>Pro technickou podporu:</p>
-              <p className="mt-1">
-                <a href="mailto:urbanjakubdev@gmail.com" className="text-gray-400 hover:underline">
-                  urbanjakubdev@gmail.com
-                </a>{' '}
-                |{' '}
-                <a href="https://github.com/UrbanJakubDev" className="text-gray-400 hover:underline">
-                  GitHub
-                </a>
-              </p>
+            <h2 className="text-2xl font-bold text-white mb-3">ERU</h2>
+            <p className="text-gray-400">Energetický regulační úřad</p>
+            <span className="mt-6 text-sm text-brand font-medium group-hover:translate-x-1 transition-transform inline-flex items-center">Přejít na výkazy &rarr;</span>
+          </div>
+        </Link>
+
+        <Link
+          href="/ote"
+          className="group relative overflow-hidden rounded-2xl border border-gray-700 bg-gray-900/50 p-8 hover:border-brand/50 transition-all duration-300 hover:shadow-[0_0_30px_-5px_var(--color-brand)]"
+        >
+          <div className="absolute inset-0 bg-gradient-to-br from-brand/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+          <div className="relative z-10 flex flex-col items-center text-center">
+            <div className="mb-6 p-4 rounded-full bg-gray-800 group-hover:bg-brand/20 transition-colors">
+              <FaFileInvoice className="w-12 h-12 text-brand" />
             </div>
-          </article>
-        </section>
-        {/* Pravý panel */}
-        <section className="flex flex-col gap-8 justify-center items-center  border border-gray-500  rounded-xl p-8 shadow-lg w-full">
-          <StatementLinkCard title="Eru E1" description="Generátor JSON pro výkaz ERU-E1" link="/eru-e1" />
-          <StatementLinkCard title="Eru T1" description="Generátor JSON pro výkaz ERU-T1" link="/eru-t1" />
-        </section>
+            <h2 className="text-2xl font-bold text-white mb-3">OTE</h2>
+            <p className="text-gray-400">Operátor trhu s elektřinou</p>
+            <span className="mt-6 text-sm text-brand font-medium group-hover:translate-x-1 transition-transform inline-flex items-center">Přejít na nástroje &rarr;</span>
+          </div>
+        </Link>
       </div>
     </div>
   )

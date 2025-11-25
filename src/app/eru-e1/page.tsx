@@ -1,20 +1,19 @@
 'use client'
 import React, { useState, useEffect } from 'react'
-import { EruE1 } from '@/utils/eru_e1.js' // We'll modify eru_e1.js to be a module
-import UnderConstruction from '@/components/underConstruction'
-import Section from '@/components/section'
-import JsonPreview from '@/components/jsonPreview/jsonPreview'
+import { EruE1 } from '@/utils/eru_e1.js'
+import { FaArrowLeft, FaFileExcel, FaFileCode, FaInfoCircle, FaDownload } from 'react-icons/fa'
+import Link from 'next/link'
+import { toast } from 'react-toastify'
+import FileDropZone from '@/components/form/FileDropZone'
 
 const EruConverter = () => {
-  const [file, setFile] = useState<File | null>(null)
+  const [files, setFiles] = useState<File[]>([])
   const [jsonResult, setJsonResult] = useState<{ typVykazu: string; vykazy: any[] } | null>(null)
-  const [error, setError] = useState<string | null>(null)
-  const [inConstruction, setInConstruction] = useState(false)
   const [kontaktniTelefon, setKontaktniTelefon] = useState('+420')
   const [odpovednyPracovnik, setOdpovednyPracovnik] = useState('Odpovedny pracovnik')
   const [loading, setLoading] = useState(false)
 
-  // Načtení z localStorage při mountu
+  // Load from localStorage on mount
   useEffect(() => {
     const savedTelefon = localStorage.getItem('eru-e1-kontaktniTelefon')
     const savedPracovnik = localStorage.getItem('eru-e1-odpovednyPracovnik')
@@ -22,7 +21,7 @@ const EruConverter = () => {
     if (savedPracovnik) setOdpovednyPracovnik(savedPracovnik)
   }, [])
 
-  // Ukládání do localStorage při změně
+  // Save to localStorage on change
   const handleTelefonChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setKontaktniTelefon(e.target.value)
     localStorage.setItem('eru-e1-kontaktniTelefon', e.target.value)
@@ -32,21 +31,15 @@ const EruConverter = () => {
     localStorage.setItem('eru-e1-odpovednyPracovnik', e.target.value)
   }
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const uploadedFile = event.target.files?.[0]
-    if (uploadedFile) {
-      setFile(uploadedFile as any)
-    }
-  }
-
   const handleConvert = async () => {
     setLoading(true)
     try {
       const handler = new EruE1()
+      const file = files[0]
       if (!file) {
         throw new Error('No file selected')
       }
-      const arrayBuffer = await (file as File).arrayBuffer()
+      const arrayBuffer = await file.arrayBuffer()
       const data = handler.readFile(arrayBuffer, 'List1')
       handler.makeStatements(data, new Date(), {
         kontaktniTelefon,
@@ -54,20 +47,42 @@ const EruConverter = () => {
       })
       const result = handler.generateStatements()
       setJsonResult(result)
-      setError(null)
+      toast.success('Konverze proběhla úspěšně!')
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred'
-      setError('Error processing file: ' + errorMessage)
-      setJsonResult(null)
+      toast.error('Chyba při zpracování souboru: ' + errorMessage)
       console.error(err)
     } finally {
       setLoading(false)
     }
   }
 
-  const downloadJson = (data: any) => {
+  const handleDownloadTemplate = () => {
     try {
-      // Helper function to remove circular references
+      const handler = new EruE1()
+      const template = handler.generateTemplate()
+
+      const blob = new Blob([template], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = 'eru-e1-template.xlsx'
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
+      toast.success('Šablona stažena!')
+    } catch (error) {
+      console.error('Failed to generate template', error)
+      toast.error('Chyba při generování šablony.')
+    }
+  }
+
+  const downloadJson = () => {
+    if (!jsonResult) return
+    try {
       const getCircularReplacer = () => {
         const seen = new WeakSet()
         return (key: string, value: any) => {
@@ -81,7 +96,7 @@ const EruConverter = () => {
         }
       }
 
-      const blob = new Blob([JSON.stringify(data, getCircularReplacer(), 2)], {
+      const blob = new Blob([JSON.stringify(jsonResult, getCircularReplacer(), 2)], {
         type: 'application/json'
       })
       const url = URL.createObjectURL(blob)
@@ -92,69 +107,133 @@ const EruConverter = () => {
       a.click()
       document.body.removeChild(a)
       URL.revokeObjectURL(url)
+      toast.success('JSON soubor stažen!')
     } catch (error) {
       console.error('Error downloading JSON:', error)
-      alert('Error creating JSON file. Check console for details.')
+      toast.error('Chyba při stahování JSON souboru.')
     }
   }
 
-  if (inConstruction) {
-    return <UnderConstruction size="large" />
-  }
-
   return (
-    <div className="grid grid-cols-6 gap-4 p-4">
-      <Section className="col-span-2">
-        <h2 className="text-xl font-bold mb-2">ERU-E1 Generátor</h2>
-        <div className="flex flex-col gap-4">
+    <div className="w-full max-w-6xl px-4 py-8">
+      <div className="mb-8">
+        <Link href="/eru" className="inline-flex items-center text-gray-400 hover:text-brand transition-colors mb-4">
+          <FaArrowLeft className="mr-2" /> Zpět na ERU
+        </Link>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <input type="file" accept=".xlsx,.xlsm" onChange={handleFileChange} />
+            <h1 className="text-3xl font-bold text-white">ERU-E1 Generátor</h1>
+            <p className="text-gray-400 mt-2">Generátor měsíčního výkazu o výrobě a spotřebě elektřiny</p>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-400 mb-1">
-              Kontaktní telefon:
-              <input
-                list="kontakty"
-                value={kontaktniTelefon}
-                onChange={handleTelefonChange}
-                placeholder="Zadejte nebo vyberte telefon"
-                className="mt-1 block w-full rounded-lg border-2 border-gray-400 bg-white px-3 py-2 text-base focus:border-brand focus:ring-2 focus:ring-brand focus:outline-none transition-all"
-              />
-            </label>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-400 mb-1">
-              Odpovědný pracovník:
-              <input
-                type="text"
-                value={odpovednyPracovnik}
-                onChange={handlePracovnikChange}
-                placeholder="Zadejte jméno"
-                className="mt-1 block w-full rounded-lg border-2 border-gray-400 bg-white px-3 py-2 text-base focus:border-brand focus:ring-2 focus:ring-brand focus:outline-none transition-all"
-              />
-            </label>
-          </div>
-          <button onClick={handleConvert} disabled={!file || loading} className="bg-brand text-white px-4 py-2 rounded disabled:opacity-50">
-            {loading ? 'Převádím...' : 'Převést na JSON'}
+          <button
+            onClick={handleDownloadTemplate}
+            className="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-xl font-medium flex items-center gap-2 transition-colors border border-gray-600"
+          >
+            <FaDownload className="text-brand" /> Stáhnout šablonu XLSX
           </button>
         </div>
-        {error && <div className="text-red-600 mt-2">{error}</div>}
-        <details className="mt-4">
-          <summary className="text-lg font-bold cursor-pointer">Obecné informace</summary>
-          <div className="mt-2">
-            <p className="text-sm text-gray-600 mb-4">Zdrojový soubor umožňuje vygenerovat hromadný import dat do dataportu ERU, pro výkaz ERU-E1.</p>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Left Column: Input Form */}
+        <div className="lg:col-span-1 space-y-6">
+          <div className="bg-gray-900/50 border border-gray-700 rounded-2xl p-6">
+            <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+              <FaFileExcel className="text-green-500" /> Vstupní data
+            </h2>
+
+            <div className="space-y-4">
+              <FileDropZone
+                files={files}
+                onFilesChange={newFiles => {
+                  setFiles(newFiles.slice(0, 1))
+                  setJsonResult(null)
+                }}
+                accept=".xlsx,.xlsm"
+                placeholder="Vybrat Excel soubor"
+                dragActivePlaceholder="Pusťte soubor zde"
+                label=".xlsx nebo .xlsm"
+                id="eru-e1-upload"
+              />
+
+              {/* Inputs */}
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-xs font-medium text-gray-400 mb-1">Kontaktní telefon</label>
+                  <input
+                    list="kontakty"
+                    value={kontaktniTelefon}
+                    onChange={handleTelefonChange}
+                    className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:border-brand focus:ring-1 focus:ring-brand outline-none transition-all"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-400 mb-1">Odpovědný pracovník</label>
+                  <input
+                    type="text"
+                    value={odpovednyPracovnik}
+                    onChange={handlePracovnikChange}
+                    className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:border-brand focus:ring-1 focus:ring-brand outline-none transition-all"
+                  />
+                </div>
+              </div>
+
+              <button
+                onClick={handleConvert}
+                disabled={files.length === 0 || loading}
+                className={`w-full py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-all ${
+                  files.length === 0 ? 'bg-gray-800 text-gray-500 cursor-not-allowed' : 'bg-brand hover:bg-brand/90 text-white shadow-lg shadow-brand/20'
+                }`}
+              >
+                {loading ? 'Zpracování...' : 'Převést na JSON'}
+              </button>
+            </div>
           </div>
-        </details>
-        <details className="mt-4">
-          <summary className="text-lg font-bold cursor-pointer">Návod k použití ERU-E1 Konvertoru</summary>
-          <div className="mt-2">
-            <p className="text-sm text-gray-600 mb-4">1. Nahrajte soubor: Klikněte na pole pro nahrání souboru a vyberte svůj Excel soubor.</p>
-            <p className="text-sm text-gray-600 mb-4">2. Vyplňte kontaktní údaje: Zadejte telefon a odpovědného pracovníka.</p>
-            <p className="text-sm text-gray-600 mb-4">3. Spusťte konverzi: Klikněte na tlačítko "Převést na JSON". Po úspěšné konverzi si můžete stáhnout výsledný JSON soubor.</p>
+
+          {/* Info Panel */}
+          <div className="bg-gray-900/50 border border-gray-700 rounded-2xl p-6">
+            <h3 className="text-lg font-bold text-white mb-3 flex items-center gap-2">
+              <FaInfoCircle className="text-blue-400" /> Nápověda
+            </h3>
+            <div className="text-sm text-gray-400 space-y-2">
+              <p>1. Nahrajte Excel soubor s daty.</p>
+              <p>2. Vyplňte kontaktní údaje.</p>
+              <p>3. Klikněte na "Převést na JSON".</p>
+              <p>4. Stáhněte si vygenerovaný soubor.</p>
+            </div>
           </div>
-        </details>
-      </Section>
-      <Section className="col-span-4">{jsonResult && <JsonPreview jsonData={jsonResult} downloadJson={downloadJson} />}</Section>
+        </div>
+
+        {/* Right Column: Result Preview */}
+        <div className="lg:col-span-2">
+          <div className="bg-gray-900/50 border border-gray-700 rounded-2xl p-6 h-full flex flex-col">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                <FaFileCode className="text-yellow-500" /> Náhled JSON
+              </h2>
+              {jsonResult && (
+                <button
+                  onClick={downloadJson}
+                  className="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors border border-gray-600"
+                >
+                  Stáhnout JSON
+                </button>
+              )}
+            </div>
+
+            <div className="flex-grow bg-gray-950 rounded-xl border border-gray-800 p-4 overflow-auto max-h-[600px]">
+              {jsonResult ? (
+                <pre className="text-xs text-green-400 font-mono whitespace-pre-wrap">{JSON.stringify(jsonResult, null, 2)}</pre>
+              ) : (
+                <div className="h-full flex flex-col items-center justify-center text-gray-500">
+                  <FaFileCode className="w-12 h-12 mb-4 opacity-20" />
+                  <p>Zde se zobrazí náhled vygenerovaného JSONu</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
